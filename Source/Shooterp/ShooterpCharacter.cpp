@@ -146,6 +146,7 @@ void AShooterpCharacter::OnFire()
 	if (ProjectileClass != NULL)
 	{
 		UWorld* const World = GetWorld();
+
 		if (World != NULL)
 		{
 			/*if (bUsingMotionControllers)
@@ -181,6 +182,7 @@ void AShooterpCharacter::OnFire()
 	{
 		// Get the animation object for the arms mesh
 		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+
 		if (AnimInstance != NULL)
 		{
 			AnimInstance->Montage_Play(FireAnimation, 1.f);

@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Gun.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ATP_ThirdPersonCharacter
@@ -16,6 +17,8 @@ AGuardia::AGuardia()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+
+	PrimaryActorTick.bCanEverTick = true;
 
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
@@ -37,13 +40,14 @@ AGuardia::AGuardia()
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 		// Create a gun mesh component
+	/*
 	FP_Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Gun"));
 	FP_Gun->SetOnlyOwnerSee(false);			// only the owning player will see this mesh
 	FP_Gun->bCastDynamicShadow = false;
 	FP_Gun->CastShadow = false;
 	// FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
 	FP_Gun->SetupAttachment(RootComponent);
-
+	*/
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -87,11 +91,21 @@ void AGuardia::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 void AGuardia::BeginPlay()
 {
 Super::BeginPlay();
-FP_Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 
+
+if (RifleClass)
+{
+	FP_Gun = GetWorld()->SpawnActor<AGun>(RifleClass);
+	FP_Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+}
 //
 
 
+}
+
+void AGuardia::Tick(float Deltatime)
+{
+	//FP_Gun->OnFire();
 }
 
 void AGuardia::OnResetVR()
@@ -123,6 +137,8 @@ void AGuardia::LookUpAtRate(float Rate)
 
 void AGuardia::MoveForward(float Value)
 {
+	
+
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
 		// find out which way is forward

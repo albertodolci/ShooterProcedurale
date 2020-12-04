@@ -21,11 +21,15 @@ class AGuardia : public ACharacter
 
 	/** Gun mesh: 1st person view (seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	class USkeletalMeshComponent* FP_Gun;
+	class AGun* FP_Gun;
 
 
 public:
 	AGuardia();
+
+	/** Projectile class to spawn */
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+		TSubclassOf<class AGun> RifleClass;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -37,6 +41,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+
+	virtual void Tick(float Deltatime) override;
 
 protected:
 
