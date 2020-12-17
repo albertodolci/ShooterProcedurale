@@ -5,7 +5,7 @@
 #include "ShooterpProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Kismet/GameplayStatics.h"
-#include "ShooterpCharacter.h"
+#include "Guardia.h"
 
 // Sets default values
 AGun::AGun()
@@ -51,9 +51,9 @@ void AGun::OnFire()
 		{
 	
 			//{
-			const FRotator SpawnRotation = GetActorRotation();
+			const FRotator SpawnRotation = FP_MuzzleLocation->GetComponentRotation();
 			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = FP_MuzzleLocation->GetComponentLocation();
+			const FVector  SpawnLocation = FP_MuzzleLocation->GetComponentLocation();
 
 			//Set Spawn Collision Handling Override
 			FActorSpawnParameters ActorSpawnParams;
@@ -72,14 +72,27 @@ void AGun::OnFire()
 	}
 
 	// try and play a firing animation if specified
+	
 	if (FireAnimation != NULL)
 	{
 		// Get the animation object for the arms mesh
-		UAnimInstance* AnimInstance = (Cast<AShooterpCharacter>(GetOwner()))->GetMesh1P()->GetAnimInstance();
-
-		if (AnimInstance != NULL)
+		AActor* var = GetOwner();
+    
+		AGuardia* cha = Cast<AGuardia>(var);
+		
+		if (cha != nullptr)
 		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
+			UAnimInstance* AnimInstance = cha->GetMesh()->GetAnimInstance();
+
+			if (AnimInstance != nullptr)
+			{
+				UE_LOG(LogTemp, Error, TEXT("montaggio"));
+				AnimInstance->Montage_Play(FireAnimation, 1.f);
+			}
+
 		}
+
+	    //UAnimInstance* AnimInstance = ( Cast<AShooterpCharacter>( GetOwner() ))->GetMesh1P()->GetAnimInstance();	
 	}
+	
 }

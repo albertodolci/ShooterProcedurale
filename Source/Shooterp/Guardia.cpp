@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "TimerManager.h"
 #include "Gun.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -15,6 +16,8 @@
 
 AGuardia::AGuardia()
 {
+	IsShoot = false;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -39,23 +42,15 @@ AGuardia::AGuardia()
 	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
-		// Create a gun mesh component
-	/*
-	FP_Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Gun"));
-	FP_Gun->SetOnlyOwnerSee(false);			// only the owning player will see this mesh
-	FP_Gun->bCastDynamicShadow = false;
-	FP_Gun->CastShadow = false;
-	// FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
-	FP_Gun->SetupAttachment(RootComponent);
-	*/
-
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+	TimeAnim = 0.23;
+
+	//Hit_Point = 50;
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -71,6 +66,9 @@ void AGuardia::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("MoveForward", this, &AGuardia::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AGuardia::MoveRight);
 
+
+	// Bind fire event
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AGuardia::OnFire);
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
@@ -88,19 +86,42 @@ void AGuardia::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 }
 
 
+void AGuardia::SubisciDanno(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	//UE_LOG(LogTemp, Error, TEXT("Colpito Hit = %f"),Hit_Point);
+}
+
 void AGuardia::BeginPlay()
 {
 Super::BeginPlay();
 
+OnTakeAnyDamage.AddDynamic(this, &AGuardia::SubisciDanno);
 
 if (RifleClass)
 {
 	FP_Gun = GetWorld()->SpawnActor<AGun>(RifleClass);
+	FP_Gun->SetOwner(this);
 	FP_Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 }
 //
 
 
+}
+
+void AGuardia::OnFire()
+{
+	if (!IsShoot)
+	{
+		FP_Gun->OnFire();
+		IsShoot = true;
+		GetWorldTimerManager().SetTimer(TFuoco,this,&AGuardia::StopFire, TimeAnim,false);
+	}
+
+}
+
+void AGuardia::StopFire()
+{
+	IsShoot = false;
 }
 
 void AGuardia::Tick(float Deltatime)

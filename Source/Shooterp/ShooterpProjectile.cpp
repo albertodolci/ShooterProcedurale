@@ -3,6 +3,7 @@
 #include "ShooterpProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 //sto facendo modifiche a caso.....
 
@@ -33,15 +34,21 @@ AShooterpProjectile::AShooterpProjectile()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+	BaseDamage = 10.f;
 }
 
 void AShooterpProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+	if ((OtherActor) && (OtherActor != this))
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-
-		Destroy();
+		//OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		TSubclassOf<UDamageType> Damage;
+		FHitResult HitInfo;
+		UE_LOG(LogTemp, Error, TEXT("Hit"));
+		UGameplayStatics::ApplyPointDamage(OtherActor, BaseDamage, NormalImpulse, HitInfo,nullptr,this, Damage);
+		
 	}
+
+	Destroy();
 }

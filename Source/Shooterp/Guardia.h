@@ -23,9 +23,15 @@ class AGuardia : public ACharacter
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class AGun* FP_Gun;
 
+	FTimerHandle TFuoco;
+
+	void StopFire();
 
 public:
 	AGuardia();
+
+	//UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Damage")
+	//	float Hit_Point;
 
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
@@ -35,16 +41,30 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
 
+	UPROPERTY(EditDefaultsOnly)
+	float TimeAnim;
+
+	UFUNCTION()
+	void SubisciDanno(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
 	virtual void BeginPlay() override;
 
+	void OnFire();
+
+	UPROPERTY(BlueprintReadWrite,Category = "Fire")
+	bool IsShoot;
+
 
 	virtual void Tick(float Deltatime) override;
 
 protected:
+
+
+
 
 	/** Resets HMD orientation in VR. */
 	void OnResetVR();

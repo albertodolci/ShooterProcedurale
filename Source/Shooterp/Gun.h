@@ -19,7 +19,7 @@ public:
 		class USkeletalMeshComponent* FP_Gun;
 
 	/** Location on gun mesh where projectiles should spawn. */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(VisibleDefaultsOnly,BlueprintReadOnly, Category = Mesh)
 		class USceneComponent* FP_MuzzleLocation;
 
 protected:
@@ -31,7 +31,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	/** Projectile class to spawn */
-	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = Projectile)
 		TSubclassOf<class AShooterpProjectile> ProjectileClass;
 
 	/** Sound to play each time we fire */
@@ -44,9 +44,6 @@ public:
 
 
 	void OnFire();
-
-
-
 
 
 };
