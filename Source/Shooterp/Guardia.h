@@ -11,6 +11,13 @@ class AGuardia : public ACharacter
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	class USkeletalMeshComponent* Mesh1P;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FirstPersonCameraComponent;
+
+
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -28,10 +35,18 @@ class AGuardia : public ACharacter
 	void StopFire();
 
 public:
+
+	/** Returns Mesh1P subobject **/
+	UFUNCTION(BlueprintPure)
+		FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
+	/** Returns FirstPersonCameraComponent subobject **/
+	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+
 	AGuardia();
 
-	//UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Damage")
-	//	float Hit_Point;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Damage")
+		float Hit_Point;
 
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)

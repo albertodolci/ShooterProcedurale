@@ -9,6 +9,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "TimerManager.h"
+#include "AIController.h"
 #include "Gun.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -47,9 +48,29 @@ AGuardia::AGuardia()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+		// Create a CameraComponent	
+	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
+	FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); // Position the camera
+	FirstPersonCameraComponent->bUsePawnControlRotation = true;
+
+	GetMesh()->SetOwnerNoSee(false);
+
+	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
+	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
+	Mesh1P->SetOnlyOwnerSee(true);
+	Mesh1P->SetupAttachment(FirstPersonCameraComponent);
+	Mesh1P->bCastDynamicShadow = false;
+	Mesh1P->CastShadow = false;
+	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
+	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
+
+
+
+
 	TimeAnim = 0.23;
 
-	//Hit_Point = 50;
+	Hit_Point = 50;
 
 }
 
@@ -88,7 +109,19 @@ void AGuardia::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 
 void AGuardia::SubisciDanno(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	//UE_LOG(LogTemp, Error, TEXT("Colpito Hit = %f"),Hit_Point);
+	if (Hit_Point > 0)
+	{
+		Hit_Point -= Damage;
+
+		if (Hit_Point <= 0)
+		{
+			DetachFromControllerPendingDestroy();
+			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+
+	}
+
+	UE_LOG(LogTemp, Error, TEXT("Colpito Hit = %f"), Hit_Point);
 }
 
 void AGuardia::BeginPlay()
@@ -101,7 +134,20 @@ if (RifleClass)
 {
 	FP_Gun = GetWorld()->SpawnActor<AGun>(RifleClass);
 	FP_Gun->SetOwner(this);
+
+	AController* mycontroller = GetController();
+
+	AAIController* aicontroller = Cast<AAIController>(mycontroller);
+
+	if (aicontroller)
+	{
 	FP_Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+    }
+	else
+	{
+	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+	}
+	
 }
 //
 

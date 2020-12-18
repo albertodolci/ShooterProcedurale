@@ -82,17 +82,17 @@ void AGun::OnFire()
 		
 		if (cha != nullptr)
 		{
-			UAnimInstance* AnimInstance = cha->GetMesh()->GetAnimInstance();
+			UAnimInstance* AnimInstance = cha->GetMesh1P()->GetAnimInstance();
 
 			if (AnimInstance != nullptr)
 			{
-				UE_LOG(LogTemp, Error, TEXT("montaggio"));
+				//UE_LOG(LogTemp, Error, TEXT("montaggio"));
 				AnimInstance->Montage_Play(FireAnimation, 1.f);
 			}
 
 		}
 
-	    //UAnimInstance* AnimInstance = ( Cast<AShooterpCharacter>( GetOwner() ))->GetMesh1P()->GetAnimInstance();	
+	  //  UAnimInstance* AnimInstance = ( Cast<AShooterpCharacter>( GetOwner() ))->GetMesh1P()->GetAnimInstance();	
 	}
 	
 }
