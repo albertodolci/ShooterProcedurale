@@ -18,12 +18,10 @@
 AGuardia::AGuardia()
 {
 	IsShoot = false;
-
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
 	PrimaryActorTick.bCanEverTick = true;
-
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
@@ -38,6 +36,7 @@ AGuardia::AGuardia()
 	GetCharacterMovement()->AirControl = 0.2f;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
+	/*
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
@@ -47,14 +46,14 @@ AGuardia::AGuardia()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
-		// Create a CameraComponent	
+	*/
+	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
-	GetMesh()->SetOwnerNoSee(false);
+	GetMesh()->SetOwnerNoSee(true);
 
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
@@ -65,11 +64,7 @@ AGuardia::AGuardia()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
-
-
-
 	TimeAnim = 0.23;
-
 	Hit_Point = 50;
 
 }
@@ -117,11 +112,13 @@ void AGuardia::SubisciDanno(AActor* DamagedActor, float Damage, const UDamageTyp
 		{
 			DetachFromControllerPendingDestroy();
 			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	    	Hit_Point = FMath::RandRange(0,-2);
+
 		}
 
 	}
 
-	UE_LOG(LogTemp, Error, TEXT("Colpito Hit = %f"), Hit_Point);
+	//UE_LOG(LogTemp, Error, TEXT("Colpito Hit = %f"), Hit_Point);
 }
 
 void AGuardia::BeginPlay()
@@ -135,21 +132,22 @@ if (RifleClass)
 	FP_Gun = GetWorld()->SpawnActor<AGun>(RifleClass);
 	FP_Gun->SetOwner(this);
 
-	AController* mycontroller = GetController();
+	auto MyRule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
 
-	AAIController* aicontroller = Cast<AAIController>(mycontroller);
-
-	if (aicontroller)
+	if ( !IsPlayerControlled() ) //è un AI
 	{
-	FP_Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+	FP_Gun->AttachToComponent(GetMesh(), MyRule, TEXT("GripPoint"));
     }
 	else
 	{
-	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+
+	Tags.Add("Enemy");
+	GetCharacterMovement()->MaxWalkSpeed = 850.f;
+
+	FP_Gun->AttachToComponent(Mesh1P, MyRule, TEXT("GripPoint"));
 	}
 	
 }
-//
 
 
 }

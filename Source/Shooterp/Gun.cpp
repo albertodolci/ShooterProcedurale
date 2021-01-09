@@ -73,21 +73,20 @@ void AGun::OnFire()
 
 	// try and play a firing animation if specified
 	
-	if (FireAnimation != NULL)
+	if (FireAnimation)
 	{
 		// Get the animation object for the arms mesh
 		AActor* var = GetOwner();
     
 		AGuardia* cha = Cast<AGuardia>(var);
 		
-		if (cha != nullptr)
+		if (cha)
 		{
 			UAnimInstance* AnimInstance = cha->GetMesh1P()->GetAnimInstance();
 
-			if (AnimInstance != nullptr)
+			if (AnimInstance)
 			{
-				//UE_LOG(LogTemp, Error, TEXT("montaggio"));
-				AnimInstance->Montage_Play(FireAnimation, 1.f);
+					AnimInstance->Montage_Play(FireAnimation, 1.f);
 			}
 
 		}
