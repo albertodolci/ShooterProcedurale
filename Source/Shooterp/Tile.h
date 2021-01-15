@@ -18,9 +18,20 @@ public:
 	UFUNCTION(BlueprintImplementableEvent,Category = "Attach")
 	FTransform GetAttachedArrow();
 	
+	UFUNCTION(BlueprintCallable,Category = "Procedurale")
+	void InserisciAttori
+	(TSubclassOf<AActor> DaCreare, int32 Minimo, int32 Massimo, float raggio, float ScalaMin, float ScalaMax);
+
+	void InsAttore(TSubclassOf<AActor>& DaCreare, const FVector& SpawnPoint, float scala);
+
+	bool CastSphere(FVector luogo, float raggio);
+
+	bool TrovaSpazioVuoto(FVector& Spawn, float Raggio);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 
 public:	
 	// Called every frame
