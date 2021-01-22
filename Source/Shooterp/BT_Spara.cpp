@@ -17,6 +17,4 @@ EBTNodeResult::Type UBT_Spara::ExecuteTask(UBehaviorTreeComponent& OwnerComp,uin
 		return  EBTNodeResult::Succeeded;
 	}
 	else return  EBTNodeResult::Failed;
-
-
 }

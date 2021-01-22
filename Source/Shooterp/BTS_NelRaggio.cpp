@@ -14,22 +14,14 @@ void UBTS_NelRaggio::TickNode(UBehaviorTreeComponent& OwnerComponent, uint8* Nod
 	auto ENmPawn = Cast<APawn>(lavagna->GetValueAsObject(Nemico.SelectedKeyName));
 
 	if (MyPawn && ENmPawn)
-	{
+		{
 		if ( (MyPawn->GetActorLocation() - ENmPawn->GetActorLocation() ).Size() > Raggio)
-		{
-			
+			{
 			lavagna->SetValueAsBool(bRaggio.SelectedKeyName,false);
-		}
+			}
 		else
-		{
+			{
 			lavagna->SetValueAsBool(bRaggio.SelectedKeyName,true);
-
-		}
-
-
-	}
-
-	//	int index = lavagna->GetValueAsInt(IndexKey.SelectedKeyName);
-
-
+		    }
+	    }
 }

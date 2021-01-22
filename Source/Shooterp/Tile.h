@@ -15,6 +15,8 @@ public:
 	// Sets default values for this actor's properties
 	ATile();
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	UFUNCTION(BlueprintImplementableEvent,Category = "Attach")
 	FTransform GetAttachedArrow();
 	
@@ -32,6 +34,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	
+
+	
 
 public:	
 	// Called every frame

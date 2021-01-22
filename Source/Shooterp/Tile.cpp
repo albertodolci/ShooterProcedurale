@@ -4,6 +4,7 @@
 #include "Tile.h"
 #include "DrawDebugHelpers.h"
 #include "Shooterp.h"
+#include "ShooterpGameMode.h"
 
 // Sets default values
 ATile::ATile()
@@ -24,12 +25,16 @@ void ATile::InserisciAttori(TSubclassOf<AActor> DaCreare, int32 Minimo, int32 Ma
 	{
 		FVector SpawnPoint;
 
-		if ( TrovaSpazioVuoto(SpawnPoint, raggio) )
-		{
 		float scala = FMath::FRandRange(ScalaMin, ScalaMax);
-		InsAttore(DaCreare, SpawnPoint, scala);
+
+		if ( TrovaSpazioVuoto(SpawnPoint, raggio*scala) )
+		{
+			InsAttore(DaCreare, SpawnPoint, scala);
 	    }
 	}
+
+
+	
 }
 
 void ATile::InsAttore(TSubclassOf<AActor>& DaCreare, const FVector& SpawnPoint,float scala)
@@ -62,8 +67,8 @@ bool ATile::CastSphere(FVector luogo, float raggio)
 		FCollisionShape::MakeSphere(raggio)
 	    );
 
-	FColor Colore = Colpito ? FColor::Red : FColor::Green;
-	DrawDebugSphere(GetWorld(), LuogoGlobale, raggio, 10, Colore, true, 100);
+	//FColor Colore = Colpito ? FColor::Red : FColor::Green;
+	//DrawDebugSphere(GetWorld(), LuogoGlobale, raggio, 10, Colore, true, 100);
 
 
 	return Colpito;
@@ -71,8 +76,7 @@ bool ATile::CastSphere(FVector luogo, float raggio)
 
 bool ATile::TrovaSpazioVuoto(FVector& Spawn, float Raggio)
 {
-	FVector  Min(0, -1650, 0);
-	FVector  Max(7050, 1650, 0);
+
 	FBox Spazio(Min, Max);
 
 	int MAX = 25;
@@ -94,6 +98,20 @@ void ATile::BeginPlay()
 	//CastSphere(GetActorLocation() + FVector(400,0,0), 300);
 
 	//CastSphere(GetActorLocation() + FVector(0,0,500) , 300);
+}
+
+void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	TArray<AActor*> DaRipulire;
+	GetAttachedActors(DaRipulire);
+
+	for (int i = 0; i < DaRipulire.Num(); i++)
+	{
+		AShooterpGameMode::VDestroy(DaRipulire[i]);
+	}
+
 }
 
 // Called every frame
