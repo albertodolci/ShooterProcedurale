@@ -11,6 +11,9 @@ class SHOOTERP_API ATile : public AActor
 {
 	GENERATED_BODY()
 	
+	class UPool* pool = nullptr;
+
+
 public:	
 	// Sets default values for this actor's properties
 	ATile();
@@ -30,16 +33,22 @@ public:
 
 	bool TrovaSpazioVuoto(FVector& Spawn, float Raggio);
 
+	virtual void Tick(float DeltaTime) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void PosizionaNavMesh();
 	
+	AActor* NMesh;
+
+
 
 	
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	
+
+	void SetPool(UPool* nwep);
 
 };

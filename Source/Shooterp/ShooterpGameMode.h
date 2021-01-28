@@ -11,7 +11,19 @@ class AShooterpGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+protected:
+
+	void AggiungiALibreria(class ANavMeshBoundsVolume* DaAggiungere);
+
+	UFUNCTION(BluePrintCallable, Category = "Libreria")
+		void RiempiLibreria();
+
 public:
+
+
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = "pool")
+		class UPool* pool = nullptr;
+
 
 	UWorld* World = nullptr;
 

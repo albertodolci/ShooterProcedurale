@@ -4,7 +4,9 @@
 #include "Tile.h"
 #include "DrawDebugHelpers.h"
 #include "Shooterp.h"
+#include "Pool.h"
 #include "ShooterpGameMode.h"
+#include "NavigationSystem/Public/NavigationSystem.h"
 
 // Sets default values
 ATile::ATile()
@@ -14,7 +16,7 @@ ATile::ATile()
 
 }
 
-void ATile::InserisciAttori(TSubclassOf<AActor> DaCreare, int32 Minimo, int32 Massimo,float raggio,float ScalaMin = 1 , float ScalaMax = 1 )
+void ATile::InserisciAttori(TSubclassOf<AActor> DaCreare, int32 Minimo, int32 Massimo,float raggio,float ScalaMin, float ScalaMax)
 {
 	// trovare il punto di spawn
 	
@@ -77,6 +79,9 @@ bool ATile::CastSphere(FVector luogo, float raggio)
 bool ATile::TrovaSpazioVuoto(FVector& Spawn, float Raggio)
 {
 
+	FVector Min = FVector(0, -1650, 0);
+	FVector Max = FVector(7050, 1650, 0);
+
 	FBox Spazio(Min, Max);
 
 	int MAX = 25;
@@ -95,10 +100,38 @@ bool ATile::TrovaSpazioVuoto(FVector& Spawn, float Raggio)
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();
-	//CastSphere(GetActorLocation() + FVector(400,0,0), 300);
+	
+	/*
+	TActorIterator<AActor> ActorIt = TActorIterator<AActor>(GetWorld());
 
-	//CastSphere(GetActorLocation() + FVector(0,0,500) , 300);
+	while (ActorIt)
+	{
+		AActor* FoundActor = *ActorIt;
+		UE_LOG(LogTemp, Warning, TEXT("Found Actor %s"), *FoundActor->GetName());
+		++ActorIt;
+	}*/
+
 }
+
+void ATile::PosizionaNavMesh()
+{
+	NMesh = pool->Estrai();
+
+	if (NMesh)
+	{ // posiziona nav mesh
+		FVector NewPos = GetActorLocation();
+		NewPos.X += 3525;
+    	NMesh->SetActorLocation(NewPos);
+		FNavigationSystem::Build(*GetWorld());
+
+		UE_LOG( LogTemp, Error, TEXT("Nav Mesh %s Assegnata a Tile %s"),*NMesh->GetName(),*GetName() );
+
+	}
+	else UE_LOG(LogTemp, Error, TEXT("No NavMesh Disponibili"));
+
+}
+
+
 
 void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
@@ -112,6 +145,7 @@ void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		AShooterpGameMode::VDestroy(DaRipulire[i]);
 	}
 
+	pool->Inserisci(NMesh);
 }
 
 // Called every frame
@@ -119,5 +153,12 @@ void ATile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ATile::SetPool(UPool* nwep)
+{
+	pool = nwep;
+
+	PosizionaNavMesh();
 }
 
