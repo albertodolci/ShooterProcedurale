@@ -65,7 +65,8 @@ AGuardia::AGuardia()
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
 	TimeAnim = 0.23;
-	Hit_Point = 50;
+	Max_Hit_Point = 50;
+	Hit_Point = Max_Hit_Point;
 
 }
 
@@ -110,6 +111,9 @@ void AGuardia::SubisciDanno(AActor* DamagedActor, float Damage, const UDamageTyp
 
 		if (Hit_Point <= 0)
 		{
+			auto MyRule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
+			FP_Gun->AttachToComponent(GetMesh(), MyRule, TEXT("GripPoint"));
+
 			DetachFromControllerPendingDestroy();
 			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	    	Hit_Point = FMath::RandRange(0,-2);
@@ -125,6 +129,8 @@ void AGuardia::BeginPlay()
 {
 Super::BeginPlay();
 
+
+
 OnTakeAnyDamage.AddDynamic(this, &AGuardia::SubisciDanno);
 
 if (RifleClass)
@@ -137,10 +143,14 @@ if (RifleClass)
 	if ( !IsPlayerControlled() ) //è un AI
 	{
 	FP_Gun->AttachToComponent(GetMesh(), MyRule, TEXT("GripPoint"));
+
+	Max_Hit_Point = Max_Hit_Point/2;
+	Hit_Point = Max_Hit_Point;
+
     }
 	else
 	{
-
+	Hit_Point = Max_Hit_Point;
 	Tags.Add("Enemy");
 	GetCharacterMovement()->MaxWalkSpeed = 850.f;
 
@@ -159,6 +169,7 @@ void AGuardia::OnFire()
 		FP_Gun->OnFire();
 		IsShoot = true;
 		GetWorldTimerManager().SetTimer(TFuoco,this,&AGuardia::StopFire, TimeAnim,false);
+		MakeNoise(1,this,GetActorLocation(),NAME_None);
 	}
 
 }

@@ -46,7 +46,11 @@ public:
 	AGuardia();
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Damage")
+		float Max_Hit_Point;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Damage")
 		float Hit_Point;
+
 
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
