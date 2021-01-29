@@ -53,6 +53,37 @@ void ATile::InsAttore(TSubclassOf<AActor>& DaCreare, const FVector& SpawnPoint,f
 	(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 }
 
+void ATile::InserisciNemici(TSubclassOf<APawn> DaCreare, int32 Minimo, int32 Massimo, float raggio)
+{
+	int NumeroNemici = FMath::RandRange(Minimo, Massimo);
+
+	for (int i = 0; i < NumeroNemici; i++)
+	{
+		FVector SpawnPoint;
+    	if (TrovaSpazioVuoto(SpawnPoint, raggio))
+		{
+			UE_LOG(LogTemp, Error, TEXT("ciao"));
+			InsNemico(DaCreare, SpawnPoint);
+		}
+	}
+}
+
+void ATile::InsNemico(TSubclassOf<APawn>& DaCreare, const FVector& SpawnPoint)
+{
+	APawn* Elemento = GetWorld()->SpawnActor<APawn>(DaCreare, SpawnPoint,FRotator(0,0,0));
+
+	if (Elemento)
+	{
+
+	Elemento->SetActorRelativeLocation(SpawnPoint);
+	Elemento->SpawnDefaultController();
+	Elemento->AttachToActor
+ 	(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+
+    }
+
+}
+
 bool ATile::CastSphere(FVector luogo, float raggio)
 {
 	FHitResult risultato;

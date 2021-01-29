@@ -29,11 +29,20 @@ public:
 
 	void InsAttore(TSubclassOf<AActor>& DaCreare, const FVector& SpawnPoint, float scala);
 
+	UFUNCTION(BlueprintCallable, Category = "Procedurale")
+		void InserisciNemici
+		(TSubclassOf<APawn> DaCreare, int32 Minimo, int32 Massimo, float raggio);
+
+	void InsNemico(TSubclassOf<APawn>& DaCreare, const FVector& SpawnPoint);
+
+
 	bool CastSphere(FVector luogo, float raggio);
 
 	bool TrovaSpazioVuoto(FVector& Spawn, float Raggio);
 
 	virtual void Tick(float DeltaTime) override;
+
+	void SetPool(UPool* nwep);
 
 protected:
 	// Called when the game starts or when spawned
@@ -42,13 +51,5 @@ protected:
 	void PosizionaNavMesh();
 	
 	AActor* NMesh;
-
-
-
-	
-
-	
-
-	void SetPool(UPool* nwep);
 
 };

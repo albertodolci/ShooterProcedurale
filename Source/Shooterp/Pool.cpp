@@ -19,6 +19,8 @@ AActor* UPool::Estrai()
 {
 	if (Pila.Num() > 0)
 	{
+		UE_LOG(LogTemp, Error, TEXT("Estrai trovato"));
+
 		return Pila.Pop();
 
 	} else return nullptr;
@@ -26,10 +28,13 @@ AActor* UPool::Estrai()
 
 void UPool::Inserisci(AActor* DaInserire)
 {
+	UE_LOG(LogTemp, Error , TEXT("oggetto inserito %s"), *DaInserire->GetName());
 	Pila.Add(DaInserire);
 }
 
 void UPool::Aggiungi(AActor* DaInserire)
 {
+
+	UE_LOG(LogTemp, Error, TEXT("oggetto inserito %s"), *DaInserire->GetName());
 	Pila.Add(DaInserire);
 }
