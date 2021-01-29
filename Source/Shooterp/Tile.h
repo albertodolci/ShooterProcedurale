@@ -35,6 +35,7 @@ public:
 
 	void InsNemico(TSubclassOf<APawn>& DaCreare, const FVector& SpawnPoint);
 
+	//static int32 score;
 
 	bool CastSphere(FVector luogo, float raggio);
 
